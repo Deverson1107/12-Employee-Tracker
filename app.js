@@ -17,15 +17,13 @@ var promptStart = function () {
         {
             type: "list",
             message: "What would you like to do?:",
-            choices: ['View Departments', 'View Employees', 'Add Department', 'Add Employee', 'Update Employee Role', 'Exit'],
+            choices: ['View Departments', 'View Roles', 'View Employees', 'Add Department', 'Add Role', 'Add Employee', 
+            'Update Employee Role', 'Exit'],
             name: "nextSection"
         },
     ]
     ).then(
         function(answers) {
-            if (answers.nextSection === "View Employees") {
-                promptStart();
-            }
             if (answers.nextSection === "View Departments") {
                 console.log("\n-----------------------------------");
                 console.log("Current Departments:");
@@ -44,11 +42,55 @@ var promptStart = function () {
                     }
                 );
             };
-            if (answers.nextSection === "Add Department") {
-                newDepartmentPrompt();
-            }
+            if (answers.nextSection === "View Roles") {
+                console.log("\n-----------------------------------");
+                console.log("Current Roles:");
+                connection.query(
+                    "SELECT * FROM roles" , function(err, res) {
+                        if (err) throw err;
+                        for (var i = 0; i < res.length; i++) {
+                            console.log(
+                                res[i].id +
+                                " | " +
+                                res[i].role_name +
+                                " | " +
+                                res[i].role_salary +
+                                " | " +
+                                res[i].dep_id 
+                            )
+                        }
+                    console.log("-----------------------------------\n");
+                    promptStart();
+                    }
+                );
+            };
+            if (answers.nextSection === "View Employees") {
+                console.log("\n-----------------------------------");
+                console.log("Current Employees:");
+                connection.query(
+                    "SELECT * FROM employees" , function(err, res) {
+                        if (err) throw err;
+                        for (var i = 0; i < res.length; i++) {
+                            console.log(
+                                res[i].id +
+                                " | " +
+                                res[i].first_name +
+                                " | " +
+                                res[i].last_name +
+                                " | " +
+                                res[i].role_id 
+                            )
+                        }
+                    console.log("-----------------------------------\n");
+                    promptStart();
+                    }
+                );
+            };
             if (answers.nextSection === "Add Employee") {
                 newEmployeePrompt();
+            }
+            if (answers.nextSection === "Add Department") {
+                newDepartmentPrompt();
             }
             if (answers.nextSection === "Update Employee Role") {
                 updateRole();
@@ -95,24 +137,23 @@ var addingRole = function () {
     inquirer.prompt(
     [
         {
-            message: 'Please enter additonal role:',
+            message: 'Please enter new role name:',
             name: 'newrole'
         },
         {
+            message: 'Please enter new role salary:',
+            name: 'salary'
+        },
+        {
             type: 'list',
-            message: "Do you wish to add additonal roles to your new department?",
-            choices: ['Yes', 'No'],
-            name: "continue"
+            message: "Which department will this role be in?",
+            choices: [],
+            name: "dep"
         }
     ]
     ).then(
         function (answers) {
-            if (answers.continue === 'Yes') {
-                addingRole();
-            }
-            else {
-                promptStart();
-            }
+           
         }
     )
 }
@@ -132,20 +173,9 @@ var newEmployeePrompt = function () {
         {
             type: 'list',
             choices: [],
-            message: 'Please pick employee department:',
-            name: 'employeeDepartment'
-        },
-        {
-            type: 'list',
-            choices: [],
             message: 'Please pick employee role:',
             name: 'employeeRole'
         },
-        {
-            type: 'number',
-            message: 'Please enter employee salary:',
-            name: 'employeeSalary'
-        }
     ]    
     )
 }
@@ -159,12 +189,6 @@ var updateRole = function () {
             choices: [],
             message: "Please choose an employee to update:",
             name: 'employeeChoice'
-        },
-        {
-            type: 'list',
-            choices: [],
-            message: "Pick a new department for chosen employee:",
-            name: 'updatedDepartment'
         },
         {
             type: 'list',
