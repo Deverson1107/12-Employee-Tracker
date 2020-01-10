@@ -69,27 +69,25 @@ var newDepartmentPrompt = function () {
             message: "Please enter new department name:",
             name: "departmentName"
         },
-        {
-            message: "Please enter role in new department:",
-            name: "departmentrole"
-        },
-        {
-            type: 'list',
-            message: "Do you wish to add additonal roles to your new department?",
-            choices: ['Yes', 'No'],
-            name: "continue"
-        }
     ]
     ).then (
-        function(answers) {
-            if (answers.continue === "Yes") {
-                addingRole();
-            }
-            else {
+        function (answers) {
+            newdep = answers.departmentName;
+            console.log("\n-----------------------------------");
+            console.log("Adding new department...");
+            connection.query(
+                "INSERT INTO departments SET ?",
+                {
+                dep_name: newdep
+                },
+            function(err, res) {
+                if (err) throw err;
+                console.log(newdep + " department added!");
+                console.log("-----------------------------------\n");
                 promptStart();
-            }
+            })
         }
-    )
+    )    
 }
 
 //Adds new roles to new department.
