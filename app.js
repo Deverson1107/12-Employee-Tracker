@@ -41,11 +41,6 @@ var newDepartmentPrompt = function () {
     inquirer.prompt(
     [
         {
-            type: 'number',
-            message: "Please enter new department id number:",
-            name: "departmentid"
-        },
-        {
             message: "Please enter new department name:",
             name: "departmentName"
         },
@@ -54,14 +49,15 @@ var newDepartmentPrompt = function () {
             name: "departmentrole"
         },
         {
-            type: 'confirm',
+            type: 'list',
             message: "Do you wish to add additonal roles to your new department?",
+            choices: ['Yes', 'No'],
             name: "continue"
         }
     ]
     ).then (
         function(answers) {
-            if (answers.continue === "y") {
+            if (answers.continue === "Yes") {
                 addingRole();
             }
             else {
@@ -80,17 +76,20 @@ var addingRole = function () {
             name: 'newrole'
         },
         {
-            type: 'confirm',
-            message: "Do you wish to add additional roles to your new department?",
-            name: 'continue'
+            type: 'list',
+            message: "Do you wish to add additonal roles to your new department?",
+            choices: ['Yes', 'No'],
+            name: "continue"
         }
     ]
     ).then(
         function (answers) {
-            if (answers.continye === 'y') {
+            if (answers.continue === 'Yes') {
                 addingRole();
             }
-            else {}
+            else {
+                promptStart();
+            }
         }
     )
 }
@@ -99,11 +98,6 @@ var addingRole = function () {
 var newEmployeePrompt = function () {
     inquirer.prompt(
     [
-        {
-            type: 'number',
-            message: 'Please enter a new employee id number:',
-            name: 'employeeid'
-        },
         {
             message: "Please enter employee first name:",
             name: 'employeeFirstName'
