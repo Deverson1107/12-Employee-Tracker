@@ -53,10 +53,8 @@ var promptStart = function () {
                                 res[i].id +
                                 " | " +
                                 res[i].role_name +
-                                " | " +
-                                res[i].role_salary +
-                                " | " +
-                                res[i].dep_id 
+                                " | Salary: $" +
+                                res[i].role_salary 
                             )
                         }
                     console.log("-----------------------------------\n");
@@ -75,10 +73,8 @@ var promptStart = function () {
                                 res[i].id +
                                 " | " +
                                 res[i].first_name +
-                                " | " +
-                                res[i].last_name +
-                                " | " +
-                                res[i].role_id 
+                                " " +
+                                res[i].last_name 
                             )
                         }
                     console.log("-----------------------------------\n");
