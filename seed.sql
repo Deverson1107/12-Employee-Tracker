@@ -23,6 +23,6 @@ CREATE TABLE employees (
     last_name VARCHAR (30) NOT NULL,
     role_id INT NOT NULL,
     PRIMARY KEY (id)
-)
+);
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'kaiju0790'
