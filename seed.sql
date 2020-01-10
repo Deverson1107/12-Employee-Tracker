@@ -24,3 +24,5 @@ CREATE TABLE employees (
     role_id INT NOT NULL,
     PRIMARY KEY (id)
 )
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'kaiju0790'

@@ -1,4 +1,14 @@
 const inquirer = require("inquirer");
+var mysql = require("mysql");
+
+//setting up sql server
+var connection = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "kaiju0790",
+    database: "employee_db",
+  });
 
 //initial prompt. Moves user to a number of different actions.
 var promptStart = function () {
@@ -17,8 +27,23 @@ var promptStart = function () {
                 promptStart();
             }
             if (answers.nextSection === "View Departments") {
-                promptStart();
-            }
+                console.log("\n-----------------------------------");
+                console.log("Current Departments:");
+                connection.query(
+                    "SELECT * FROM departments" , function(err, res) {
+                        if (err) throw err;
+                        for (var i = 0; i < res.length; i++) {
+                            console.log(
+                                res[i].id +
+                                " | " +
+                                res[i].dep_name
+                            )
+                        }
+                    console.log("-----------------------------------\n");
+                    promptStart();
+                    }
+                );
+            };
             if (answers.nextSection === "Add Department") {
                 newDepartmentPrompt();
             }
