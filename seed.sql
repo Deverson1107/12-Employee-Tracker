@@ -14,7 +14,8 @@ CREATE TABLE roles (
   role_name VARCHAR(30) NOT NULL,
   role_salary VARCHAR(30) NOT NULL,
   dep_id INT NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (dep_id) REFERENCES departments(id)
 );
 
 CREATE TABLE employees (
@@ -22,7 +23,8 @@ CREATE TABLE employees (
     first_name VARCHAR (30) NOT NULL,
     last_name VARCHAR (30) NOT NULL,
     role_id INT NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'kaiju0790'

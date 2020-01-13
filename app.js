@@ -144,13 +144,13 @@ var newRolePrompt = function () {
                     name: 'salary'
                 },
                 {
-                    type: "rawlist",
+                    type: "list",
                     choices: function() {
-                      var choiceArray = [];
-                      for (var i = 0; i < res.length; i++) {
-                        choiceArray.push(res[i].dep_name);
-                      }
-                      return choiceArray;
+                        var choiceArray = [];
+                        for (var i = 0; i < res.length; i++) {
+                            choiceArray.push(res[i].dep_name);
+                        }
+                        return choiceArray;
                     },
                     message: "Please choose role department:",
                     name: "depid",
@@ -158,14 +158,12 @@ var newRolePrompt = function () {
             ]
         ).then(
             function (answers) {
-                newrl = answers.newrole;
+                var newrl = answers.newrole;
                 console.log("\n-----------------------------------");
                 console.log("Adding new role...");
                 connection.query(
-                    "INSERT INTO roles SET ?",
-                    {role_name: newrl},
-                    {role_salary: answers.salary},
-                    {dep_id: answers.depid},
+                    `INSERT INTO roles (role_name, role_salary, dep_id)
+                    VALUES ('${answers.newrole}', '${answers.salary}', (SELECT id FROM departments WHERE dep_name = '${answers.depid}'))`,
                     function(err) {
                         if (err) throw err;
                         console.log(newrl + " added!");
@@ -210,13 +208,11 @@ var newEmployeePrompt = function () {
                 console.log("\n-----------------------------------");
                 console.log("Adding new employee...");
                 connection.query(
-                    "INSERT INTO employees SET ?",
-                    {first_name: newemp},
-                    {last_name: answers.employeeLastName},
-                    {role_id: answers.roleid},
+                    `INSERT INTO employees (first_name, last_name, role_id)
+                    VALUES ('${answers.employeeFirstName}', '${answers.employeeLastName}', (SELECT id FROM roles WHERE role_name = '${answers.roleid}'))`,
                     function(err) {
                         if (err) throw err;
-                        console.log(newrl + " added to current employees!");
+                        console.log(newemp + " has been added to current employees!");
                         console.log("-----------------------------------\n");
                         promptStart();
                     })
@@ -232,11 +228,11 @@ var updateRole = function () {
         inquirer.prompt(
             [
                 {
-                    type: "rawlist",
+                    type: "list",
                     choices: function() {
                       var choiceArray = [];
                       for (var i = 0; i < res.length; i++) {
-                        choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                        choiceArray.push(res[i].first_name);
                       }
                       return choiceArray;
                     },
@@ -245,14 +241,13 @@ var updateRole = function () {
                 },
             ]
             ).then( 
-                function (answers) {
-                    var employee = answers.employeeid;
+                function () {
                     connection.query("SELECT * FROM roles", function (err, res) {
                         if (err) throw err;
                         inquirer.prompt(
                             [
                                 {
-                                    type: "rawlist",
+                                    type: "list",
                                     choices: function() {
                                       var choiceArray = [];
                                       for (var i = 0; i < res.length; i++) {
@@ -266,15 +261,15 @@ var updateRole = function () {
                             ]
                         ).then(
                             function (answers) {
-                                newrole = answers.roleid;
                                 console.log("\n-----------------------------------");
                                 console.log("Updating employee...");
                                 connection.query(
-                                    "UPDATE employees SET {employee} WHERE role_id",
-                                    {role_id: newrole},
+                                    `UPDATE employees 
+                                    SET role_id = (SELECT id FROM roles WHERE role_name = '${answers.roleid}')
+                                    WHERE id = (SELECT id FROM employees WHERE first_name = '${answers.employeeid}')`,
                                     function(err) {
                                         if (err) throw err;
-                                        console.log(employee + " is now a " + newrole);
+                                        console.log(answers.employeeid + " is now a " + answers.roleid);
                                         console.log("-----------------------------------\n");
                                         promptStart();
                                     })
