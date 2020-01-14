@@ -190,7 +190,7 @@ var newEmployeePrompt = function () {
                     name: 'employeeLastName'
                 },
                 {
-                    type: "rawlist",
+                    type: "list",
                     choices: function() {
                       var choiceArray = [];
                       for (var i = 0; i < res.length; i++) {
@@ -232,7 +232,7 @@ var updateRole = function () {
                     choices: function() {
                       var choiceArray = [];
                       for (var i = 0; i < res.length; i++) {
-                        choiceArray.push(res[i].first_name);
+                        choiceArray.push(res[i].id + ". " + res[i].first_name + " " + res[i].last_name);
                       }
                       return choiceArray;
                     },
@@ -241,7 +241,8 @@ var updateRole = function () {
                 },
             ]
             ).then( 
-                function () {
+                function (answer) {
+                    var empstr = answer.employeeid;
                     connection.query("SELECT * FROM roles", function (err, res) {
                         if (err) throw err;
                         inquirer.prompt(
@@ -251,7 +252,7 @@ var updateRole = function () {
                                     choices: function() {
                                       var choiceArray = [];
                                       for (var i = 0; i < res.length; i++) {
-                                        choiceArray.push(res[i].role_name);
+                                        choiceArray.push(res[i].id + ". " + res[i].role_name );
                                       }
                                       return choiceArray;
                                     },
@@ -261,15 +262,21 @@ var updateRole = function () {
                             ]
                         ).then(
                             function (answers) {
+                                var rolestr = answers.roleid;
+                                var rolenum = rolestr.charAt(0);
+                                var empnum = empstr.charAt(0);
+                                parseInt(rolenum);
+                                parseInt(empnum);
+                                console.log(empnum);
                                 console.log("\n-----------------------------------");
                                 console.log("Updating employee...");
                                 connection.query(
                                     `UPDATE employees 
-                                    SET role_id = (SELECT id FROM roles WHERE role_name = '${answers.roleid}')
-                                    WHERE id = (SELECT id FROM employees WHERE first_name = '${answers.employeeid}')`,
+                                    SET role_id = ${rolenum}
+                                    WHERE id = ${empnum}`,
                                     function(err) {
                                         if (err) throw err;
-                                        console.log(answers.employeeid + " is now a " + answers.roleid);
+                                        console.log("Employee role updated!");
                                         console.log("-----------------------------------\n");
                                         promptStart();
                                     })
